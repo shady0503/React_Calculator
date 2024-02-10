@@ -14,9 +14,14 @@ function Main() {
         } else if(value === "="){
             setCurrentOperand(eval(previousOperand+currentOperand))
             setPreviousOperand("")
-        } else if(["*", "+", "/", "-"].includes(value)) {
-            setPreviousOperand(eval(previousOperand + currentOperand)+" "+value)
-            setCurrentOperand("")
+        } else if (["*", "+", "/", "-"].includes(value)) {
+            if (["*", "+", "/", "-"].includes(previousOperand.slice(-1)) && currentOperand=='') {
+            setPreviousOperand(eval(previousOperand.slice(0, -1) + currentOperand) + " " + value);
+            } else {
+            setPreviousOperand(eval(previousOperand + currentOperand) + " " + value);
+            }
+
+            setCurrentOperand("");
         } else {
             setCurrentOperand((currentOperand+value))
         }
