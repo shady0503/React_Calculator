@@ -4,26 +4,49 @@ import Button from "./Button";
 function Main() {
     const [currentOperand, setCurrentOperand] = useState("");
     const [previousOperand, setPreviousOperand] = useState("");
+    const operatorSet = new Set(["*", "+", "/", "-"]);
+
+
+    const calculate = (expression) => {
+        try {
+            return new Function('return ' + expression)();
+        } catch (e) {
+            throw new Error("Invalid expression");
+        }
+    };
 
     const handleButtonClick = (value) => {
         if(value === "AC") {
             setCurrentOperand("");
             setPreviousOperand("");
         } else if(value === "DEL") {
-            setCurrentOperand("");
+            setCurrentOperand(prev => prev.slice(0, -1));
         } else if(value === "="){
-            setCurrentOperand(eval(previousOperand+currentOperand))
-            setPreviousOperand("")
-        } else if (["*", "+", "/", "-"].includes(value)) {
-            if (["*", "+", "/", "-"].includes(previousOperand.slice(-1)) && currentOperand=='') {
-            setPreviousOperand(eval(previousOperand.slice(0, -1) + currentOperand) + " " + value);
-            } else {
-            setPreviousOperand(eval(previousOperand + currentOperand) + " " + value);
+            try {
+                setCurrentOperand(calculate(previousOperand + currentOperand).toString());
+                setPreviousOperand("");
+            } catch {
+                setCurrentOperand("Error");
+                setTimeout(() => setCurrentOperand(""), 1500);
             }
-
+        } else if (operatorSet.has(value)) {
+            if (operatorSet.has(previousOperand.slice(-1)) && currentOperand === '') {
+                setPreviousOperand(prev => prev.slice(0, -1) + value);
+            } else {
+                try {
+                    setPreviousOperand(calculate(previousOperand + currentOperand) + value);
+                } catch {
+                    setCurrentOperand("Error");
+                    setTimeout(() => {
+                        setCurrentOperand("");
+                        setPreviousOperand("");
+                    }, 1500);
+                }
+            }
             setCurrentOperand("");
-        } else {
-            setCurrentOperand((currentOperand+value))
+        } else if (value === "." && currentOperand.includes(".")) {}
+        else {
+            setCurrentOperand(prev => prev + value);
         }
     };
 
