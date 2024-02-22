@@ -30,6 +30,9 @@ function Main() {
                 setTimeout(() => setCurrentOperand(""), 1500);
             }
         } else if (operatorSet.has(value)) {
+            if(previousOperand==="" && currentOperand===""){
+                return
+            }
             if (operatorSet.has(previousOperand.slice(-1)) && currentOperand === '') {
                 setPreviousOperand(prev => prev.slice(0, -1) + value);
             } else {
